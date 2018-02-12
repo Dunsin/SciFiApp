@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { Nav, Platform } from 'ionic-angular';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { AngularFireAuth } from 'angularfire2/auth'; 
 
 import { HomePage } from '../pages/home/home';
 import { ListPage } from '../pages/list/list';
@@ -12,12 +13,23 @@ import { ListPage } from '../pages/list/list';
 export class MyApp {
   @ViewChild(Nav) nav: Nav;
 
-  rootPage: any = HomePage;
+  //rootPage: any = HomePage;
+  rootPage:any;
 
   pages: Array<{title: string, component: any}>;
 
-  constructor(public platform: Platform, public statusBar: StatusBar, public splashScreen: SplashScreen) {
+  constructor(public platform: Platform, public statusBar: StatusBar, 
+    public splashScreen: SplashScreen, public af: AngularFireAuth) 
+  {
     this.initializeApp();
+    const authListener = af.authState.subscribe(user => { if (user) {
+       this.rootPage = HomePage; 
+       authListener.unsubscribe(); 
+      } else { 
+        this.rootPage = 'LandingPage'; 
+        authListener.unsubscribe(); 
+      } 
+    });
 
     // used for an example of ngFor and navigation
     this.pages = [
